@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import argparse
+from antler import Crawler
+
+parser = argparse.ArgumentParser(
+            description='Antler is a python web crawler')
+
+parser.add_argument('site_url',
+                    action='store',
+                    help='full url of a website')
+
+args = parser.parse_args()
+
+crawler = Crawler(args.site_url)
+for url, count in crawler.visited.items():
+    print 'FOUND %d on %s' % (count, url)

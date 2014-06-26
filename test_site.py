@@ -1,6 +1,5 @@
 import antler
 from antler import Site
-from antler import Crawler
 
 import unittest
 from mock import Mock, call, patch
@@ -22,7 +21,7 @@ class SiteTestCase(unittest.TestCase):
     @patch('antler.findall')
     def test_find_a_filters_out_bad_links(self, findall):
 	antler.visited = ['http://example.com/index.html']
-	findall.return_value = ['#menu2', '?foo=bar', '/index.html', '/about.html', '', 'javascript:MyFunction();']
+	findall.return_value = ['#menu2', '?foo=bar', '/about.html', '', 'javascript:MyFunction();']
 
         site = Site("http://example.com")
 	matches = site.find_a("")
