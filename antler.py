@@ -5,7 +5,6 @@ import urllib
 import sys
 
 
-
 class Crawler(object):
 
 
@@ -34,7 +33,7 @@ class Crawler(object):
 
         sample = [x for x in urls if x not in self.visited.keys()]
         childs = []
-        for url in sample[:50]:
+        for url in sample:
             if self.count > 49:
                 print '\nstopped {0}'.format({'depth': depth, 'visited': len(self.visited)})
                 return False
@@ -47,6 +46,8 @@ class Crawler(object):
 
         if childs:
             self.next(childs, depth+1)
+
+        return True
 
 
 class Site(object):
@@ -62,7 +63,11 @@ class Site(object):
     def request(self):
         sys.stdout.write('.')
         sys.stdout.flush()
-        io = urllib.urlopen(self.url)
+        try:
+            io = urllib.urlopen(self.url)
+        except:
+            print '\ncould not open url %s, timeout 1 second' % url
+            return ''
         return io.read()
 
     def count_input(self, body):
