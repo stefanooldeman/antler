@@ -6,6 +6,7 @@ import sys
 import Queue
 import threading
 
+visited = {}
 
 class Crawler(object):
 
@@ -15,13 +16,8 @@ class Crawler(object):
         collect a dictoinary of visited sites and the the count of <input.. tags.
         """
         self.count = 0
-        self.visited = {}
         if start_url:
             self.find([start_url])
-
-    def update_data(self, url, count):
-        self.count += 1
-        self.visited[url] = count
 
     def next(self, urls, depth):
         self.find(urls, depth)
@@ -30,25 +26,26 @@ class Crawler(object):
         print '\nurls %d depth %d' % (len(urls), depth)
 
         if depth == 3:
-            print 'stopped {0}'.format({'depth': depth, 'visited': len(self.visited)})
+            print 'stopped {0}'.format({'depth': depth, 'visited': len(visited)})
             return False
 
         childs = []
         threads = []
         for url in urls:
             if self.count > 49:
-                print '\nstopped {0}'.format({'depth': depth, 'visited': len(self.visited)})
+                print '\nstopped {0}'.format({'depth': depth, 'visited': len(visited)})
                 return False
-            if url in self.visited.keys():
+            if url in visited.keys():
                 continue
             site = Site(url)
             site.start()
             threads.append(site)
+            self.count += 1
 
         # loop over all sites and wait for results
+        print "foobar %d" % len(threads)
         for site in threads:
             site.join()
-            self.update_data(url, site.count_input())
             childs.extend(site.find_a())
 
         if childs:
@@ -77,8 +74,10 @@ class Site(threading.Thread):
             io = urllib.urlopen(self.url)
         except:
             print '\ncould not open url %s, timeout 1 second' % url
-            return ''
+            self.html = ''
         self.html = io.read()
+        print self.url
+        visited[self.url] = self.count_input()
 
     def count_input(self):
         matches = findall(r'<input\s', self.html)

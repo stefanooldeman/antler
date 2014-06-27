@@ -14,7 +14,7 @@ class CrawlerTestCase(unittest.TestCase):
 
 	url = "http://google.com"
 	c = Crawler(url)
-	self.assertEqual(c.visited, {url: 0})
+	self.assertEqual(antler.isited, {url: 0})
 	c.next.assert_called_once_with(['http://google.com/about.html'], 1)
 
     @patch('antler.Site.count_input', Mock())
@@ -24,7 +24,7 @@ class CrawlerTestCase(unittest.TestCase):
         find_a.return_value = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
         crawler = Crawler()
-        crawler.visited = dict(zip(['a', 'b', 'c'], [0,1,2]))
+        antler.visited = dict(zip(['a', 'b', 'c'], [0,1,2]))
         crawler.find(['z'])
 
         self.assertEqual(find_a.call_count, 6)

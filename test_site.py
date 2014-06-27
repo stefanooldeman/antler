@@ -16,7 +16,7 @@ antler.urllib.urlopen.return_value = IO()
 class SiteTestCase(unittest.TestCase):
 
     def setUp(self):
-	antler.visited = []
+	antler.visited = {}
 
     def test_find_a_returns_all_matches(self):
         site = Site("http://example.com")
@@ -28,7 +28,7 @@ class SiteTestCase(unittest.TestCase):
 
     @patch('antler.findall')
     def test_find_a_filters_out_bad_links(self, findall):
-	antler.visited = ['http://example.com/index.html']
+        antler.visited = {'http://example.com/index.html': 0}
 	findall.return_value = ['#menu2', '?foo=bar', '/about.html', '', 'javascript:MyFunction();']
 
         site = Site("http://example.com")
