@@ -18,12 +18,10 @@ class CrawlerTestCase(unittest.TestCase):
 	c.next.assert_called_once_with(['http://google.com/about.html'], 1)
 
     @patch('antler.Site.count_input', Mock())
-    @patch('antler.Site.request', Mock())
     @patch('antler.Site.url', Mock())
-    @patch('antler.Site.__init__')
+    @patch('antler.Site.request')
     @patch('antler.Site.find_a')
     def test_crawler_skips_visited(self, find_a, Site):
-        Site.return_value = None
         find_a.return_value = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
         crawler = Crawler()
