@@ -6,7 +6,8 @@ import sys
 import Queue
 import threading
 
-visited = {}
+visited = []
+
 
 class Crawler(object):
 
@@ -26,16 +27,16 @@ class Crawler(object):
         print '\nurls %d depth %d' % (len(urls), depth)
 
         if depth == 3:
-            print 'stopped {0}'.format({'depth': depth, 'visited': len(visited)})
+            print 'stopped {0}'.format({'depth': depth, 'visited': len(self.count)})
             return False
 
         childs = []
         threads = []
         for url in urls:
             if self.count > 49:
-                print '\nstopped {0}'.format({'depth': depth, 'visited': len(visited)})
+                print '\nstopped {0}'.format({'depth': depth, 'visited': self.count})
                 return False
-            if url in visited.keys():
+            if url in visited:
                 continue
             site = Site(url)
             site.start()
@@ -43,7 +44,6 @@ class Crawler(object):
             self.count += 1
 
         # loop over all sites and wait for results
-        print "foobar %d" % len(threads)
         for site in threads:
             site.join()
             childs.extend(site.find_a())
@@ -67,17 +67,14 @@ class Site(threading.Thread):
         self.base = uri.scheme + '://' + uri.netloc
 
     def run(self):
-        # write progress output
-        sys.stdout.write('.')
-        sys.stdout.flush()
         try:
             io = urllib.urlopen(self.url)
         except:
             print '\ncould not open url %s, timeout 1 second' % url
             self.html = ''
         self.html = io.read()
-        print self.url
-        visited[self.url] = self.count_input()
+        visited.append(self.url)
+        print 'FOUND %d inputs ON %s' % (self.count_input(), self.url)
 
     def count_input(self):
         matches = findall(r'<input\s', self.html)

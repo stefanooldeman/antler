@@ -17,14 +17,15 @@ class CrawlerTestCase(unittest.TestCase):
 	self.assertEqual(antler.isited, {url: 0})
 	c.next.assert_called_once_with(['http://google.com/about.html'], 1)
 
-    @patch('antler.Site.count_input', Mock())
+    @patch('antler.Site.count_input', Mock(return_value=0))
     @patch('antler.Site.url', Mock())
     @patch('antler.Site.find_a')
     def test_crawler_skips_visited(self, find_a):
         find_a.return_value = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
         crawler = Crawler()
-        antler.visited = dict(zip(['a', 'b', 'c'], [0,1,2]))
+
+        antler.visited = ['a', 'b', 'c']
         crawler.find(['z'])
 
         self.assertEqual(find_a.call_count, 6)

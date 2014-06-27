@@ -13,5 +13,3 @@ parser.add_argument('site_url',
 args = parser.parse_args()
 
 crawler = Crawler(args.site_url)
-for url, count in crawler.visited.items():
-    print 'FOUND %d on %s' % (count, url)
