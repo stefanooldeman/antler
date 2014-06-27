@@ -34,16 +34,22 @@ class Crawler(object):
             return False
 
         childs = []
+        threads = []
         for url in urls:
             if self.count > 49:
                 print '\nstopped {0}'.format({'depth': depth, 'visited': len(self.visited)})
                 return False
             if url in self.visited.keys():
                 continue
-            site = Site()
-            body = site.request(url)
-            self.update_data(url, site.count_input(body))
-            childs.extend(site.find_a(body))
+            site = Site(url)
+            site.start()
+            threads.append(site)
+
+        # loop over all sites and wait for results
+        for site in threads:
+            site.join()
+            self.update_data(url, site.count_input())
+            childs.extend(site.find_a())
 
         if childs:
             self.next(childs, depth+1)
@@ -56,14 +62,14 @@ class Site(threading.Thread):
     # defined here, for test mocking
     url = None
 
-    def __init__(self):
+    def __init__(self, url):
         super(Site, self).__init__()
         self.html = ''
-
-    def request(self, url):
         self.url = url
         uri = urlparse(url)
         self.base = uri.scheme + '://' + uri.netloc
+
+    def run(self):
         # write progress output
         sys.stdout.write('.')
         sys.stdout.flush()

@@ -19,8 +19,8 @@ class SiteTestCase(unittest.TestCase):
 	antler.visited = []
 
     def test_find_a_returns_all_matches(self):
-        site = Site()
-        site.request("http://google.com")
+        site = Site("http://example.com")
+        site.run()
         site.html = dummy_html 
         matches = site.find_a()
         self.assertIsInstance(matches, list)
@@ -31,16 +31,16 @@ class SiteTestCase(unittest.TestCase):
 	antler.visited = ['http://example.com/index.html']
 	findall.return_value = ['#menu2', '?foo=bar', '/about.html', '', 'javascript:MyFunction();']
 
-        site = Site()
-        site.request("http://example.com")
+        site = Site("http://example.com")
+        site.run()
 	matches = site.find_a()
         self.assertIsInstance(matches, list)
         self.assertEqual(len(matches), 1)
 	self.assertEqual(matches[0], "http://example.com/about.html")
 
     def test_count_input(self):
-	site = Site()
-        site.request("http://google.com")
+	site = Site("http://example.com")
+        site.run()
         site.html = dummy_html 
 	count = site.count_input()
 	self.assertEqual(count, 7)
