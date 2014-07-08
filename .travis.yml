@@ -1,0 +1,13 @@
+language:   python
+install:    make install
+script:     make test
+
+# test on these version
+python:
+    - "2.7"
+
+# exclude these branches
+branches:
+    except:
+        - gh-pages
+
